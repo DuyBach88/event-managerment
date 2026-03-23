@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Edit Event</title>
+    <link href="/css/bootstrap.css" rel="stylesheet" />
+    <link href="/css/font-awesome.css" rel="stylesheet" />
+    <%- include("./../adminNavbar.ejs") %>
+        <style>
+            :root {
+                --primary-color: #2c3e50;
+                --secondary-color: #3498db;
+                --accent-color: #e74c3c;
+            }
+
+            body {
+                background-color: #f5f6fa;
+                font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            }
+
+            .container {
+                margin-top: 30px;
+                background: white;
+                padding: 30px;
+                border-radius: 10px;
+                box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+            }
+
+            h1 {
+                color: var(--primary-color);
+                margin-bottom: 30px;
+                font-weight: 600;
+                position: relative;
+                padding-bottom: 10px;
+                text-align: center;
+            }
+
+            h1:after {
+                content: '';
+                position: absolute;
+                bottom: 0;
+                left: 50%;
+                transform: translateX(-50%);
+                width: 100px;
+                height: 4px;
+                background: var(--secondary-color);
+                border-radius: 2px;
+            }
+
+            .form-group {
+                margin-bottom: 20px;
+            }
+
+            .form-group label {
+                color: var(--primary-color);
+                font-weight: 500;
+                margin-bottom: 8px;
+                display: block;
+            }
+
+            .form-control {
+                border: 2px solid #e9ecef;
+                border-radius: 5px;
+                padding: 10px 15px;
+                transition: all 0.3s ease;
+                margin-bottom: 15px;
+            }
+
+            .form-control:focus {
+                border-color: var(--secondary-color);
+                box-shadow: 0 0 0 0.2rem rgba(52, 152, 219, 0.25);
+            }
+
+            .form-control[readonly] {
+                background-color: #f8f9fa;
+                cursor: not-allowed;
+                opacity: 0.7;
+            }
+
+            select.form-control {
+                height: 45px;
+                appearance: none;
+                background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+                background-repeat: no-repeat;
+                background-position: right 1rem center;
+                background-size: 1em;
+            }
+
+            select[multiple].form-control {
+                height: auto;
+                padding: 10px;
+                background-image: none;
+            }
+
+            .btn-primary {
+                background-color: var(--secondary-color);
+                border: none;
+                padding: 12px 30px;
+                font-weight: 600;
+                letter-spacing: 0.5px;
+                border-radius: 5px;
+                transition: all 0.3s ease;
+                width: 100%;
+                margin-top: 20px;
+            }
+
+            .btn-primary:hover {
+                background-color: var(--primary-color);
+                transform: translateY(-2px);
+                box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+            }
+
+            .speaker-section {
+                background: #f8f9fa;
+                padding: 15px;
+                border-radius: 8px;
+                margin-bottom: 20px;
+            }
+
+            .speaker-section label {
+                color: var(--primary-color);
+                font-weight: 600;
+                margin-bottom: 10px;
+                display: block;
+            }
+
+            input[type="date"],
+            input[type="time"] {
+                font-family: inherit;
+            }
+
+            @media (max-width: 768px) {
+                .container {
+                    padding: 15px;
+                }
+
+                .col-6.offset-3 {
+                    width: 100%;
+                    margin-left: 0;
+                }
+            }
+        </style>
+</head>
+
+<body>
+    <div class="container">
+        <h1 align="Center">Update Event</h1>
+        <form class="col-6 offset-3" method="POST" action="/event/update">
+            <div class="form-group">
+                <label>Event ID</label>
+                <input type="text" class="form-control" name="_id" value="<%=selectedEvent._id%>" readonly>
+            </div>
+            <div class="form-group">
+                <label>Event Name</label>
+                <input type="text" class="form-control" name="title" value="<%= selectedEvent.title %>" required />
+            </div>
+            <div class="form-group">
+                <label>Event Date</label>
+                <input type="date" class="form-control" name="date"
+                    value="<%= moment(selectedEvent.date).utc().format('YYYY-MM-DD')%>" required />
+            </div>
+            <div class="form-group">
+                <label>Start Time</label>
+                <input type="time" class="form-control" name="startTime" value="<%= selectedEvent.startTime %>"
+                    required />
+            </div>
+            <div class="form-group">
+                <label>End Time</label>
+                <input type="time" class="form-control" name="endTime" value="<%= selectedEvent.endTime %>" required />
+            </div>
+            <div class="form-group">
+                <label>Location</label>
+                <input type="text" class="form-control" name="location" value="<%= selectedEvent.location %>"
+                    required />
+            </div>
+            <div class="speaker-section">
+                <label>Main Speaker</label>
+                <select class="form-control" id="mainSpeaker" onchange="updateOtherSpeakers(this)" name="mainSpeaker">
+                    <option value="">Select Main Speaker</option>
+                    <% mySpeakers.forEach((speaker)=>{ %>
+                        <option value="<%=speaker._id%>" <%=selectedEvent.mainSpeaker &&
+                            speaker._id.toString()===selectedEvent.mainSpeaker._id.toString() ? 'selected' : '' %>>
+                            <%= speaker.fullName %>
+                        </option>
+                        <% }) %>
+                </select>
+            </div>
+            <div class="speaker-section">
+                <label>Other Speakers</label>
+                <select class="form-control" multiple name="otherSpeaker" id="otherSpeaker">
+                    <% mySpeakers.forEach((speaker)=>{ %>
+                        <option value="<%=speaker._id%>" <%=selectedEvent.mainSpeaker &&
+                            speaker._id.toString()===selectedEvent.mainSpeaker._id.toString() ? 'disabled' : '' %>
+                            <%= selectedEvent.otherSpeaker.some(other=> other._id.toString() === speaker._id.toString())
+                                ?
+                                'selected' : '' %>>
+                                <%= speaker.fullName %>
+                        </option>
+                        <% }) %>
+                </select>
+            </div>
+            <input type="submit" value="Update Event" class="btn btn-primary">
+        </form>
+    </div>
+
+
+
+    <script src="/js/jquery.min.js"></script>
+    <script src="/js/popper.js"></script>
+    <script src="/js/bootstrap.js"></script>
+    <script>
+        function updateOtherSpeakers(mainSelect) {
+            const mainSpeakerId = mainSelect.value;
+            const otherSelect = document.getElementById('otherSpeaker');
+
+            // Enable all options first
+            Array.from(otherSelect.options).forEach(option => {
+                option.disabled = false;
+            });
+
+            // Disable the main speaker in other speakers list
+            const optionToDisable = Array.from(otherSelect.options).find(option => option.value === mainSpeakerId);
+            if (optionToDisable) {
+                optionToDisable.disabled = true;
+                optionToDisable.selected = false;
+            }
+        }
+
+        // Call on page load to set initial state
+        document.addEventListener('DOMContentLoaded', function () {
+            updateOtherSpeakers(document.getElementById('mainSpeaker'));
+        });
+    </script>
+</body>
+
+</html>

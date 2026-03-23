@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Canceled Events</title>
+    <link href="/css/bootstrap.css" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <%- include("./adminNavbar.ejs") %>
+
+        <style>
+            /* Tổng thể */
+            body {
+                font-family: 'Poppins', sans-serif;
+                background: linear-gradient(to right, #f8f9fa, #e9ecef);
+                color: #343a40;
+            }
+
+            /* Container */
+            .container {
+                max-width: 1100px;
+                margin: auto;
+                padding: 20px;
+            }
+
+            /* Tiêu đề */
+            h2 {
+                color: #dc3545;
+                font-weight: bold;
+                text-align: center;
+                margin-bottom: 30px;
+                text-transform: uppercase;
+            }
+
+            /* Card Styling */
+            .event-card {
+                box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+                background: #fff;
+                padding: 20px;
+                border-radius: 12px;
+                margin-bottom: 20px;
+                transition: all 0.3s ease;
+                border-left: 8px solid #dc3545;
+                position: relative;
+            }
+
+            .event-card:hover {
+                transform: translateY(-8px);
+                box-shadow: 0 8px 18px rgba(0, 0, 0, 0.25);
+            }
+
+            /* Phân loại sự kiện */
+            .latest-canceled {
+                border-left: 8px solid #ff5733;
+                background: #fff8f7;
+            }
+
+            .old-canceled {
+                border-left: 8px solid #6c757d;
+                background: #f8f9fa;
+            }
+
+            /* Nhãn trạng thái */
+            .badge-latest,
+            .badge-old {
+                position: absolute;
+                top: 12px;
+                right: 12px;
+                padding: 6px 12px;
+                border-radius: 6px;
+                font-size: 13px;
+                font-weight: bold;
+                color: white;
+            }
+
+            .badge-latest {
+                background: #ff4500;
+            }
+
+            .badge-old {
+                background: #6c757d;
+            }
+
+            /* Người hủy */
+            .latest-canceled-speaker {
+                color: #ff4500;
+                font-weight: bold;
+            }
+
+            .old-canceled-speaker {
+                color: #6c757d;
+            }
+
+            /* Pagination */
+            .pagination-container {
+                margin-top: 30px;
+                text-align: center;
+            }
+
+            .pagination .page-link {
+                color: #dc3545;
+                border-color: #dc3545;
+                transition: 0.3s ease;
+            }
+
+            .pagination .page-item.active .page-link {
+                background-color: #dc3545;
+                border-color: #dc3545;
+                color: white;
+            }
+
+            .pagination .page-item:hover .page-link {
+                background-color: #e74c3c;
+                color: white;
+            }
+
+            /* Nút bấm */
+            .btn-custom {
+                display: flex;
+                align-items: center;
+                gap: 10px;
+                font-weight: 500;
+                padding: 10px 15px;
+                border-radius: 8px;
+                transition: all 0.3s ease;
+            }
+
+            .btn-custom i {
+                font-size: 1.2em;
+            }
+
+            .btn-custom:hover {
+                transform: scale(1.05);
+            }
+        </style>
+</head>
+
+<body>
+    <div class="container mt-4">
+        <h2><i class="fa-solid fa-calendar-xmark"></i> Canceled Events</h2>
+        <!-- Search Form -->
+        <form method="GET" action="/admin/canceled-events" class="search-bar">
+            <input type="text" name="title" class="form-control mb-2" placeholder="🔍 Search by title..."
+                value="<%= searchTitle %>">
+            <input type="text" name="location" class="form-control  mb-2" placeholder="📍 Search by location..."
+                value="<%= searchLocation %>">
+            <input type="text" name="canceledBy" class="form-control  mb-2" placeholder="👤 Canceled by..."
+                value="<%= searchCanceledBy %>">
+            <input type="date" name="startDate" class="form-control  mb-2" value="<%= startDate %>">
+            <input type="date" name="endDate" class="form-control  mb-2" value="<%= endDate %>">
+            <button type="submit" class="btn btn-danger"><i class="fa fa-search"></i> Search</button>
+            <a href="/admin/canceled-events" class="btn btn-secondary"><i class="fa fa-sync"></i> Reset</a>
+        </form>
+        <div class="row mt-4">
+            <% if (canceledEvents.length===0) { %>
+                <div class="col-12 text-center">
+                    <p class="text-muted">No canceled events found.</p>
+                </div>
+                <% } else { %>
+                    <% canceledEvents.forEach((event, index)=> { %>
+                        <div class="col-md-6">
+                            <div class="card event-card <%= index === 0 ? 'latest-canceled' : 'old-canceled' %>">
+                                <% if (index===0) { %>
+                                    <span class="badge-latest">Latest</span>
+                                    <% } else { %>
+                                        <span class="badge-old">Old</span>
+                                        <% } %>
+
+                                            <div class="card-body">
+                                                <h4 class="card-title text-danger"><i
+                                                        class="fa-solid fa-calendar-xmark"></i>
+                                                    <%= event.title %>
+                                                </h4>
+                                                <p><strong><i class="fa-solid fa-clock"></i> Event Date:</strong>
+                                                    <%= new Date(event.date).toLocaleDateString() %>
+                                                </p>
+                                                <p><strong><i class="fa-solid fa-location-dot"></i> Location:</strong>
+                                                    <%= event.location %>
+                                                </p>
+
+                                                <h5><i class="fa-solid fa-microphone"></i> Event Speakers:</h5>
+                                                <% if (event.mainSpeaker) { %>
+                                                    <p><strong>Main Speaker:</strong>
+                                                        <%= event.mainSpeaker.fullName %>
+                                                    </p>
+                                                    <% } %>
+
+                                                        <% if (event.otherSpeakers.length> 0) { %>
+                                                            <p><strong>Additional Speakers:</strong></p>
+                                                            <ul>
+                                                                <% event.otherSpeakers.forEach(speaker=> { %>
+                                                                    <li>
+                                                                        <%= speaker.fullName %>
+                                                                    </li>
+                                                                    <% }) %>
+                                                            </ul>
+                                                            <% } %>
+
+                                                                <h5 class="text-danger"><i
+                                                                        class="fa-solid fa-user-slash"></i> Canceled by:
+                                                                </h5>
+                                                                <% if (event.canceledSpeakers.length> 0) {
+                                                                    event.canceledSpeakers.sort((a, b) => new
+                                                                    Date(b.date) - new Date(a.date));
+                                                                    %>
+                                                                    <p class="latest-canceled-speaker">
+                                                                        <strong>Name:</strong>
+                                                                        <%= event.canceledSpeakers[0].name %><br>
+                                                                            <strong>Email:</strong>
+                                                                            <%= event.canceledSpeakers[0].email %><br>
+                                                                                <strong>Phone:</strong>
+                                                                                <%= event.canceledSpeakers[0].phone %>
+                                                                                    <br>
+                                                                                    <small class="text-muted">Canceled
+                                                                                        on: <%= new
+                                                                                            Date(event.canceledSpeakers[0].date).toLocaleString()
+                                                                                            %></small>
+                                                                    </p>
+                                                                    <% event.canceledSpeakers.slice(1).forEach(speaker=>
+                                                                        { %>
+                                                                        <p class="old-canceled-speaker">
+                                                                            <strong>Name:</strong>
+                                                                            <%= speaker.name %><br>
+                                                                                <strong>Email:</strong>
+                                                                                <%= speaker.email %><br>
+                                                                                    <strong>Phone:</strong>
+                                                                                    <%= speaker.phone %><br>
+                                                                                        <small
+                                                                                            class="text-muted">Canceled
+                                                                                            on: <%= new
+                                                                                                Date(speaker.date).toLocaleString()
+                                                                                                %></small>
+                                                                        </p>
+                                                                        <% }) %>
+                                                                            <% } else { %>
+                                                                                <p class="text-muted">No cancellation
+                                                                                    records found.</p>
+                                                                                <% } %>
+
+                                                                                    <a href="/event/update/<%= event._id %>"
+                                                                                        class="btn btn-primary btn-custom mt-2">
+                                                                                        <i
+                                                                                            class="fa-solid fa-user-edit"></i>
+                                                                                        Assign new Speaker
+                                                                                    </a>
+                                            </div>
+                            </div>
+                        </div>
+                        <% }) %>
+                            <% } %>
+        </div>
+    </div>
+
+    <!-- Pagination -->
+    <div class="pagination-container">
+        <ul class="pagination justify-content-center">
+            <li class="page-item <%= currentPage === 1 ? 'disabled' : '' %>">
+                <a class="page-link" href="/admin/canceled-events?page=<%= currentPage - 1 %>">Previous</a>
+            </li>
+            <% for(let i=1; i <=totalPages; i++) { %>
+                <li class="page-item <%= currentPage === i ? 'active' : '' %>">
+                    <a class="page-link" href="/admin/canceled-events?page=<%= i %>">
+                        <%= i %>
+                    </a>
+                </li>
+                <% } %>
+                    <li class="page-item <%= currentPage === totalPages ? 'disabled' : '' %>">
+                        <a class="page-link" href="/admin/canceled-events?page=<%= currentPage + 1 %>">Next</a>
+                    </li>
+        </ul>
+    </div>
+</body>
+
+</html>

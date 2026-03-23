@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Login - Events Management</title>
+  <link href="/css/bootstrap.css" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" />
+  <style>
+    /* Reset CSS */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Poppins', sans-serif;
+    }
+
+    body {
+      background: linear-gradient(to right, #1e3c72, #2a5298);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      color: #fff;
+      text-align: center;
+    }
+
+    .title {
+      font-size: 30px;
+      font-weight: bold;
+      margin-bottom: 20px;
+    }
+
+    .container {
+      width: 90%;
+      max-width: 1000px;
+      background: rgba(255, 255, 255, 0.15);
+      border-radius: 20px;
+      padding: 30px;
+      box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      backdrop-filter: blur(10px);
+    }
+
+    .form-container {
+      width: 45%;
+      padding: 20px;
+      margin-right: 30px;
+    }
+
+    .form-container h1 {
+      text-align: center;
+      margin-bottom: 20px;
+      font-size: 30px;
+      font-weight: bold;
+      letter-spacing: 1px;
+    }
+
+    .form-group {
+      margin-bottom: 15px;
+    }
+
+    label {
+      font-weight: 600;
+      color: #fff;
+    }
+
+    .form-control {
+      width: 100%;
+      padding: 12px;
+      border-radius: 8px;
+      border: none;
+      outline: none;
+      background: rgba(255, 255, 255, 0.2);
+      color: #fff;
+      transition: all 0.3s ease-in-out;
+    }
+
+    .form-control:focus {
+      background: rgba(255, 255, 255, 0.3);
+      box-shadow: 0 0 8px rgba(255, 255, 255, 0.5);
+    }
+
+    .btn-container {
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+    }
+
+    button {
+      flex: 1;
+      padding: 12px;
+      border: none;
+      border-radius: 8px;
+      font-size: 16px;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+
+    .btn-primary {
+      background: #48dbfb;
+      color: white;
+      font-weight: 600;
+    }
+
+    .btn-primary:hover {
+      background: #1dd1a1;
+    }
+
+    .alert-danger {
+      background: rgba(255, 0, 0, 0.7);
+      padding: 10px;
+      border-radius: 8px;
+      text-align: center;
+      font-weight: bold;
+    }
+
+    .slider-container {
+      width: 50%;
+      overflow: hidden;
+      border-radius: 15px;
+      box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+    }
+
+    .carousel img {
+      border-radius: 15px;
+      height: 100%;
+    }
+
+    .carousel-caption {
+      background: rgba(0, 0, 0, 0.5);
+      padding: 10px;
+      border-radius: 10px;
+    }
+
+    /* Styling for the password container and eye icon */
+    .password-container {
+      position: relative;
+    }
+
+    .password-eye {
+      position: absolute;
+      right: 10px;
+      top: 50%;
+      transform: translateY(-50%);
+      cursor: pointer;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="title">Events Management Project</div>
+  <div class="container">
+    <div class="form-container">
+      <h1>Login</h1>
+      <form action="/login" method="POST">
+        <div class="form-group">
+          <label for="username">Username</label>
+          <input type="text" class="form-control" id="username" name="username" required>
+        </div>
+        <div class="form-group">
+          <label for="password">Password</label>
+          <div class="password-container">
+            <input type="password" class="form-control" id="password" name="password" required>
+            <i class="fa fa-eye password-eye" id="toggle-password" onclick="togglePasswordVisibility()"></i>
+          </div>
+        </div>
+        <% if (locals.message && locals.message.failedLogin) { %>
+          <div class="alert alert-danger">
+            <%= message.failedLogin %>
+          </div>
+          <% } %>
+            <div class="btn-container">
+              <button type="submit" class="btn btn-primary">Sign in</button>
+              <a href="/register" class="btn btn-primary" style="text-align: center; line-height: 40px;">Sign up</a>
+            </div>
+      </form>
+      <!-- Forgot Password Button -->
+      <div class="mt-3">
+        <a href="/forgot-password" class="btn btn-link" style="color: #fff; text-decoration: none;">Forgot Password?</a>
+      </div>
+    </div>
+
+    <div class="slider-container">
+      <div id="carouselExampleCaptions" class="carousel slide" data-ride="carousel">
+        <ol class="carousel-indicators">
+        </ol>
+        <div class="carousel-inner">
+          <div class="carousel-item active">
+            <img src="/Images/1.jpg" class="d-block w-100" alt="First slide">
+            <div class="carousel-caption d-none d-md-block">
+              <p>Welcome to Node.js Events Management</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="/js/JQuery-3.3.1.min.js"></script>
+  <script src="/js/popper.js"></script>
+  <script src="/js/bootstrap.js"></script>
+
+  <script>
+    function togglePasswordVisibility() {
+      const passwordField = document.getElementById('password');
+      const passwordEyeIcon = document.getElementById('toggle-password');
+      if (passwordField.type === 'password') {
+        passwordField.type = 'text';
+        passwordEyeIcon.classList.remove('fa-eye');
+        passwordEyeIcon.classList.add('fa-eye-slash');
+      } else {
+        passwordField.type = 'password';
+        passwordEyeIcon.classList.remove('fa-eye-slash');
+        passwordEyeIcon.classList.add('fa-eye');
+      }
+    }
+  </script>
+</body>
+
+</html>

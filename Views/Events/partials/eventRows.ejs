@@ -1,0 +1,42 @@
+<% if (events.length===0) { %>
+    <tr>
+        <td colspan="8" class="text-center">No events found</td>
+    </tr>
+    <% } else { %>
+        <% events.forEach((event, index)=> { %>
+            <tr>
+                <td>
+                    <%= (currentPage - 1) * 10 + index + 1 %>
+                </td>
+                <td>
+                    <%= event.title || 'No title' %>
+                </td>
+                <td>
+                    <%= new Date(event.date).toLocaleDateString() %>
+                </td>
+                <td>
+                    <%= event.startTime ? event.startTime : 'Not set' %> - <%= event.endTime ? event.endTime : 'Not set'
+                            %>
+                </td>
+                <td>
+                    <%= event.location %>
+                </td>
+                <td>
+                    <%= event.mainSpeaker ? event.mainSpeaker.fullName : 'Not assigned' %>
+                </td>
+                <td>
+                    <% if(event.otherSpeaker && event.otherSpeaker.length> 0) { %>
+                        <% event.otherSpeaker.forEach(speaker=> { %>
+                            <%= speaker.fullName %><br>
+                                <% }) %>
+                                    <% } else { %>
+                                        No other speakers
+                                        <% } %>
+                </td>
+                <td>
+                    <a href="/event/update/<%= event._id %>" class="btn btn-primary crud">Edit</a>
+                    <button class="btn btn-danger crud" onclick="deleteEvent('<%= event._id %>')">Delete</button>
+                </td>
+            </tr>
+            <% }) %>
+                <% } %>

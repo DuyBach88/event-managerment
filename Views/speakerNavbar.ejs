@@ -1,0 +1,52 @@
+<nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <div class="container">
+        <!-- Navbar Brand -->
+        <a class="navbar-brand" href="#">Speaker Panel</a>
+
+        <!-- Toggle Button for Mobile -->
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav"
+            aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <!-- Navbar Links -->
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav mr-auto">
+                <!-- My Profile Link -->
+                <li class="nav-item">
+                    <a class="nav-link" href="/speaker/profile" style="font-weight: bold; font-size: 18px;">
+                        <i class="fas fa-user"></i> My Profile
+                    </a>
+                </li>
+                <!-- Upcoming Events Link -->
+                <li class="nav-item">
+                    <a class="nav-link" href="/speaker/upcomingEvents" style="font-weight: bold; font-size: 18px;">
+                        <i class="fas fa-calendar-alt"></i> Upcoming Events
+                    </a>
+                </li>
+                <!-- Change Password Link -->
+                <li class="nav-item">
+                    <a class="nav-link" href="/speaker/changePassword" style="font-weight: bold; font-size: 18px;">
+                        <i class="fas fa-key"></i> Change Password
+                    </a>
+                </li>
+            </ul>
+
+            <ul class="navbar-nav ml-auto">
+                <!-- Welcome Message -->
+                <li class="nav-item">
+                    <span class="navbar-text font-weight-bold text-success">
+                        Welcome, <%= locals.speakerName %> 👋
+                    </span>
+                </li>
+                <!-- Logout Button -->
+                <li class="nav-item">
+                    <a class="btn btn-danger ml-3" href="/logout">
+                        <i class="fas fa-sign-out-alt"></i> Logout
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">

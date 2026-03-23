@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Speakers List</title>
+    <link href="/css/bootstrap.css" rel="stylesheet" />
+    <link href="/css/font-awesome.css" rel="stylesheet" />
+    <%- include("./../adminNavbar.ejs") %>
+        <style>
+            * {
+                padding: 0;
+                margin: 0;
+                box-sizing: border-box;
+            }
+
+            body {
+                background-color: #f8f9fa;
+                font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+                color: #333;
+            }
+
+            .container {
+                margin-top: 60px;
+            }
+
+            h2 {
+                color: #444;
+                font-size: 28px;
+                font-weight: 600;
+                margin-bottom: 30px;
+            }
+
+            .search-container {
+                margin-bottom: 20px;
+            }
+
+            .search-box {
+                position: relative;
+                width: 100%;
+            }
+
+            .search-box input {
+                padding-right: 35px;
+            }
+
+            .search-box i {
+                position: absolute;
+                right: 10px;
+                top: 10px;
+                color: #666;
+            }
+
+            .table {
+                margin-top: 20px;
+                background-color: #fff;
+                border-radius: 10px;
+                box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+            }
+
+            th {
+                background-color: #007bff;
+                color: #fff;
+                font-weight: bold;
+            }
+
+            td {
+                vertical-align: middle;
+            }
+
+            .btn-sm {
+                padding: 8px 12px;
+                font-size: 14px;
+                text-transform: uppercase;
+            }
+
+            .btn-primary {
+                background-color: #007bff;
+                border: none;
+            }
+
+            .btn-primary:hover {
+                background-color: #0056b3;
+            }
+
+            .btn-danger {
+                background-color: #dc3545;
+                border: none;
+            }
+
+            .btn-danger:hover {
+                background-color: #c82333;
+            }
+
+            .pagination {
+                margin-top: 20px;
+                justify-content: flex-end;
+            }
+
+            .page-item.active .page-link {
+                background-color: #007bff;
+                border-color: #007bff;
+            }
+
+            .page-link {
+                border-radius: 25px;
+                font-size: 14px;
+                padding: 8px 12px;
+            }
+
+            .page-link:hover {
+                background-color: #007bff;
+                color: #fff;
+            }
+
+            .search-container {
+                margin-bottom: 30px;
+            }
+
+            /* Updated pagination styles */
+            .pagination-container {
+                background: #fff;
+                padding: 20px;
+                border-radius: 8px;
+                box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+                margin-top: 30px;
+            }
+
+            .pagination-info {
+                color: #6c757d;
+                font-size: 14px;
+                font-weight: 500;
+            }
+
+            .pagination {
+                margin: 0;
+            }
+
+            .page-item {
+                margin: 0 3px;
+            }
+
+            .page-link {
+                border: none;
+                padding: 8px 16px;
+                color: #007bff;
+                background: #f8f9fa;
+                border-radius: 4px;
+                font-weight: 500;
+                transition: all 0.3s ease;
+            }
+
+            .page-link:hover {
+                background: #007bff;
+                color: #fff;
+                transform: translateY(-2px);
+            }
+
+            .page-item.active .page-link {
+                background: #007bff;
+                color: #fff;
+                box-shadow: 0 2px 4px rgba(0, 123, 255, 0.3);
+            }
+
+            .page-item.disabled .page-link {
+                background: #e9ecef;
+                color: #6c757d;
+                cursor: not-allowed;
+            }
+        </style>
+</head>
+
+<body>
+    <div class="container mt-4">
+        <h2>Speakers Management</h2>
+
+        <!-- Search Box -->
+        <div class="search-container">
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="search-box">
+                        <input type="text" id="searchInput" class="form-control"
+                            placeholder="Search by name, username, or address..." value="<%= searchQuery %>">
+                        <i class="fa fa-search"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Speakers Table -->
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>Full Name</th>
+                    <th>Username</th>
+                    <th>Email</th>
+                    <th>Phone Number</th>
+                    <th>Gender</th>
+                    <th>Address</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                <% speakers.forEach(function(speaker) { %>
+                    <tr>
+                        <td>
+                            <%= speaker.fullName %>
+                        </td>
+                        <td>
+                            <%= speaker.username %>
+                        </td>
+                        <td>
+                            <%= speaker.email || 'N/A' %>
+                        </td>
+                        <td>
+                            <%= speaker.phoneNumber || 'N/A' %>
+                        </td>
+                        <td>
+                            <%= speaker.gender || 'N/A' %>
+                        </td>
+                        <td>
+                            <% if (speaker.address) { %>
+                                <strong>City:</strong>
+                                <%= speaker.address.city || 'N/A' %><br>
+                                    <strong>Street:</strong>
+                                    <%= speaker.address.street || 'N/A' %><br>
+                                        <strong>Building:</strong>
+                                        <%= speaker.address.building || 'N/A' %>
+                                            <% } else { %>
+                                                No address information available
+                                                <% } %>
+                        </td>
+                        <td>
+                            <a href="/speaker/update/<%= speaker._id %>" class="btn btn-primary btn-sm">Edit</a>
+                            <button onclick="deleteSpeaker('<%= speaker._id %>', this)"
+                                class="btn btn-danger btn-sm">Delete</button>
+                        </td>
+                    </tr>
+                    <% }); %>
+            </tbody>
+        </table>
+
+        <!-- Updated Pagination HTML -->
+        <div class="pagination-container">
+            <div class="d-flex justify-content-between align-items-center">
+                <div class="pagination-info">
+                    Showing <strong>
+                        <%= (currentPage - 1) * itemsPerPage + 1 %>
+                    </strong> to
+                    <strong>
+                        <%= Math.min(currentPage * itemsPerPage, totalItems) %>
+                    </strong> of
+                    <strong>
+                        <%= totalItems %>
+                    </strong> speakers
+                </div>
+                <ul class="pagination">
+                    <% if (currentPage> 1) { %>
+                        <li class="page-item">
+                            <a class="page-link" href="#" onclick="changePage(1)">
+                                <i class="fa fa-angle-double-left"></i>
+                            </a>
+                        </li>
+                        <li class="page-item">
+                            <a class="page-link" href="#" onclick="changePage(<%= currentPage - 1 %>)">
+                                <i class="fa fa-angle-left"></i>
+                            </a>
+                        </li>
+                        <% } %>
+
+                            <% for (let i=Math.max(1, currentPage - 2); i <=Math.min(totalPages, currentPage + 2); i++)
+                                { %>
+                                <li class="page-item <%= currentPage === i ? 'active' : '' %>">
+                                    <a class="page-link" href="#" onclick="changePage(<%= i %>)">
+                                        <%= i %>
+                                    </a>
+                                </li>
+                                <% } %>
+
+                                    <% if (currentPage < totalPages) { %>
+                                        <li class="page-item">
+                                            <a class="page-link" href="#" onclick="changePage(<%= currentPage + 1 %>)">
+                                                <i class="fa fa-angle-right"></i>
+                                            </a>
+                                        </li>
+                                        <li class="page-item">
+                                            <a class="page-link" href="#" onclick="changePage(<%= totalPages %>)">
+                                                <i class="fa fa-angle-double-right"></i>
+                                            </a>
+                                        </li>
+                                        <% } %>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <%- include("../partials/adminFooter.ejs") %>
+
+        <script src="/js/JQuery-3.3.1.min.js"></script>
+        <script src="/js/popper.js"></script>
+        <script src="/js/bootstrap.js"></script>
+        <script src="/js/speakerList.js"></script>
+</body>
+
+</html>

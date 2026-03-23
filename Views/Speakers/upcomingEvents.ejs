@@ -1,0 +1,423 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Upcoming Events</title>
+    <link href="/css/bootstrap.css" rel="stylesheet" />
+    <link href="/css/font-awesome.css" rel="stylesheet" />
+    <style>
+        :root {
+            --primary-color: #4361ee;
+            --secondary-color: #3f37c9;
+            --accent-color: #4895ef;
+            --success-color: #4cc9f0;
+            --warning-color: #f72585;
+            --light-bg: #f8f9fa;
+        }
+
+        body {
+            font-family: 'Segoe UI', 'Roboto', sans-serif;
+            background-color: var(--light-bg);
+            color: #2b2d42;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 30px auto;
+            padding: 0 20px;
+        }
+
+        .header {
+            text-align: center;
+            background: linear-gradient(135deg, var(--primary-color), var(--accent-color));
+            padding: 2rem;
+            border-radius: 15px;
+            margin-bottom: 2rem;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .header h1 {
+            color: white;
+            font-size: 2.5rem;
+            font-weight: 600;
+            margin: 0;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .search-section {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 15px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+            margin-bottom: 2rem;
+        }
+
+        .form-control,
+        .form-select {
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            padding: 10px 15px;
+            transition: all 0.3s ease;
+        }
+
+        .form-control:focus,
+        .form-select:focus {
+            border-color: var(--accent-color);
+            box-shadow: 0 0 0 0.2rem rgba(67, 97, 238, 0.15);
+        }
+
+        .table-section {
+            background: white;
+            border-radius: 15px;
+            padding: 2rem;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+        }
+
+        .table {
+            border-collapse: separate;
+            border-spacing: 0;
+            width: 100%;
+        }
+
+        .table th {
+            background: var(--primary-color);
+            color: white;
+            font-weight: 500;
+            padding: 15px;
+            text-transform: uppercase;
+            font-size: 0.9rem;
+            letter-spacing: 0.5px;
+        }
+
+        .table td {
+            padding: 15px;
+            border-bottom: 1px solid #eee;
+            vertical-align: middle;
+        }
+
+        .btn {
+            border-radius: 8px;
+            padding: 8px 20px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary {
+            background: var(--primary-color);
+            border: none;
+        }
+
+        .btn-primary:hover {
+            background: var(--secondary-color);
+            transform: translateY(-2px);
+        }
+
+        .btn-secondary {
+            background: #6c757d;
+            border: none;
+        }
+
+        .badge {
+            padding: 8px 12px;
+            border-radius: 6px;
+            font-weight: 500;
+            font-size: 0.85rem;
+        }
+
+        .pagination {
+            margin-top: 2rem;
+        }
+
+        .page-link {
+            color: var(--primary-color);
+            border: none;
+            padding: 10px 15px;
+            margin: 0 5px;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+
+        .page-link:hover {
+            background: var(--primary-color);
+            color: white;
+        }
+
+        .page-item.active .page-link {
+            background: var(--primary-color);
+            color: white;
+        }
+
+        @media (max-width: 992px) {
+            .table-section {
+                overflow-x: auto;
+            }
+
+            .table {
+                min-width: 1000px;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .header h1 {
+                font-size: 2rem;
+            }
+
+            .container {
+                padding: 0 10px;
+            }
+
+            .main-speaker {
+                color: #ff4500;
+                /* Màu cho Main Speaker */
+                font-weight: bold;
+            }
+
+            .other-speaker {
+                color: #4895ef;
+                /* Màu cho Other Speaker */
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <%- include("./../speakerNavbar.ejs") %>
+
+        <div class="container">
+            <div class="header">
+                <h1>Upcoming Events</h1>
+            </div>
+
+            <!-- Add Search Form -->
+            <div class="search-section mb-4">
+                <form id="searchForm" class="row g-3">
+                    <div class="col-md-3">
+                        <input type="text" class="form-control" id="searchInput" name="search"
+                            placeholder="Search by title or location" value="<%= searchQuery %>">
+                    </div>
+                    <div class="col-md-3">
+                        <select class="form-select" id="speakerFilter" name="speakerFilter">
+                            <option value="">All Speakers</option>
+                            <% allSpeakers.forEach(speaker=> { %>
+                                <option value="<%= speaker._id %>" <%=selectedSpeaker===speaker._id.toString()
+                                    ? 'selected' : '' %>>
+                                    <%= speaker.fullName %>
+                                </option>
+                                <% }); %>
+                        </select>
+                    </div>
+                    <div class="col-md-3">
+                        <input type="date" class="form-control" id="dateInput" name="date" value="<%= searchDate %>">
+                    </div>
+                    <div class="col-md-3">
+                        <button type="submit" class="btn btn-primary">Search</button>
+                        <button type="button" class="btn btn-secondary" onclick="clearSearch()">Clear</button>
+                    </div>
+                </form>
+            </div>
+
+            <div class="table-section">
+                <table class="table text-center">
+                    <thead>
+                        <tr>
+                            <th>No.</th>
+                            <th>Title</th>
+                            <th>Event Date</th>
+                            <th>Time</th>
+                            <th>Location</th>
+                            <th>Main Speaker</th>
+                            <th>Other Speakers</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <% events.forEach((event, index)=> { %>
+                            <tr>
+                                <td>
+                                    <%= index + 1 %>
+                                </td>
+                                <td>
+                                    <%= event.title %>
+                                </td>
+                                <td>
+                                    <%= event.date ? event.date.toLocaleDateString() : 'Not set' %>
+                                </td>
+                                <td>
+                                    <%= event.startTime %> - <%= event.endTime %>
+                                </td>
+                                <td>
+                                    <%= event.location || 'TBD' %>
+                                </td>
+                                <td>
+                                    <%= event.mainSpeaker ? event.mainSpeaker.fullName : 'Not assigned' %>
+                                </td>
+                                <td>
+                                    <% if (event.otherSpeaker && event.otherSpeaker.length> 0) { %>
+                                        <ul class="list-unstyled mb-0">
+                                            <% event.otherSpeaker.forEach(speaker=> { %>
+                                                <li>
+                                                    <%= speaker.fullName %>
+                                                </li>
+                                                <% }) %>
+                                        </ul>
+                                        <% } else { %>
+                                            No other speakers
+                                            <% } %>
+                                </td>
+                                <td>
+                                    <% try { let today=new Date(); let eventDate=event.date ? new Date(event.date) :
+                                        null; let status='Unknown' ; let isCompleted=false; if (!eventDate) {
+                                        status='Date not set' ; } else { let [currentHour, currentMinute]=[new
+                                        Date().getHours(), new Date().getMinutes()]; let [startHour,
+                                        startMinute]=(event.startTime || '00:00' ).split(':').map(Number); let [endHour,
+                                        endMinute]=(event.endTime || '23:59' ).split(':').map(Number); let
+                                        currentTimeMinutes=currentHour * 60 + currentMinute; let
+                                        startTimeMinutes=startHour * 60 + startMinute; let endTimeMinutes=endHour * 60 +
+                                        endMinute; eventDate.setHours(0,0,0,0); today.setHours(0,0,0,0); if (eventDate>
+                                        today) {
+                                        status = 'Upcoming';
+                                        } else if (eventDate < today) { status='Completed' ; isCompleted=true; } else {
+                                            if (currentTimeMinutes < startTimeMinutes) { status='Upcoming' ; } else if
+                                            (currentTimeMinutes>= startTimeMinutes && currentTimeMinutes <=
+                                                endTimeMinutes) { status='Ongoing' ; } else { status='Completed' ;
+                                                isCompleted=true; } } } event.status=status;
+                                                event.isCompleted=isCompleted; %>
+                                                <span
+                                                    class="badge bg-<%= status === 'Upcoming' ? 'warning' : status === 'Ongoing' ? 'success' : 'secondary' %>">
+                                                    <%= status %>
+                                                </span>
+                                                <% } catch (err) { %>
+                                                    <span class="badge bg-secondary">Error</span>
+                                                    <% } %>
+                                </td>
+                                <td>
+                                    <% if (event.mainSpeaker && event.mainSpeaker._id.toString()===currentSpeakerId) {
+                                        %>
+                                        <% if (event.isCompleted) { %>
+                                            <button class="btn btn-secondary btn-sm" disabled>Finished</button>
+                                            <% } else if (event.status==='Ongoing' ) { %>
+                                                <button class="btn btn-success btn-sm" disabled>Event Ongoing</button>
+                                                <% } else { %>
+                                                    <button class="btn btn-danger btn-sm"
+                                                        onclick="cancelEvent('<%= event._id %>')">Cancel Event</button>
+                                                    <% } %>
+                                                        <% } else if (event.otherSpeaker && event.otherSpeaker.some(s=>
+                                                            s._id.toString() === currentSpeakerId)) { %>
+                                                            <% if (event.isCompleted) { %>
+                                                                <button class="btn btn-secondary btn-sm"
+                                                                    disabled>Finished</button>
+                                                                <% } else if (event.status==='Ongoing' ) { %>
+                                                                    <button class="btn btn-success btn-sm"
+                                                                        disabled>Event Ongoing</button>
+                                                                    <% } else { %>
+                                                                        <button class="btn btn-secondary btn-sm"
+                                                                            disabled
+                                                                            title="Only main speakers can cancel events">Not
+                                                                            Allowed</button>
+                                                                        <% } %>
+                                                                            <% } %>
+                                </td>
+                            </tr>
+                            <% }) %>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Add Pagination -->
+            <div class="pagination-section mt-4">
+                <nav aria-label="Page navigation">
+                    <ul class="pagination justify-content-center">
+                        <% if (currentPage> 1) { %>
+                            <li class="page-item">
+                                <a class="page-link" href="javascript:void(0)"
+                                    onclick="changePage(<%= currentPage - 1 %>)">Previous</a>
+                            </li>
+                            <% } %>
+
+                                <% for(let i=1; i <=totalPages; i++) { %>
+                                    <li class="page-item <%= currentPage === i ? 'active' : '' %>">
+                                        <a class="page-link" href="javascript:void(0)" onclick="changePage(<%= i %>)">
+                                            <%= i %>
+                                        </a>
+                                    </li>
+                                    <% } %>
+
+                                        <% if (currentPage < totalPages) { %>
+                                            <li class="page-item">
+                                                <a class="page-link" href="javascript:void(0)"
+                                                    onclick="changePage(<%= currentPage + 1 %>)">Next</a>
+                                            </li>
+                                            <% } %>
+                    </ul>
+                </nav>
+            </div>
+        </div>
+        <%- include('../partials/speakerFooter') %>
+            <script src="/js/JQuery-3.3.1.min.js"></script>
+            <script src="/js/popper.js"></script>
+            <script src="/js/bootstrap.js"></script>
+            <script src="/js/eventList.js"></script>
+            <script>
+                function cancelEvent(eventId) {
+                    if (confirm('Are you sure you want to cancel this event? As a main speaker, canceling will require admin to find a replacement.')) {
+                        fetch('/speaker/cancelEvent', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                            },
+                            body: JSON.stringify({ eventId })
+                        })
+                            .then(response => response.json())
+                            .then(data => {
+                                if (data.success) {
+                                    alert(data.message);
+                                    location.reload();
+                                } else {
+                                    alert(data.message || 'Failed to cancel event');
+                                }
+                            })
+                            .catch(error => {
+                                console.error('Error:', error);
+                                alert('Failed to cancel event');
+                            });
+                    }
+                }
+
+                function changePage(page) {
+                    const urlParams = new URLSearchParams(window.location.search);
+                    urlParams.set('page', page);
+                    window.location.href = `${window.location.pathname}?${urlParams.toString()}`;
+                }
+
+                function clearSearch() {
+                    document.getElementById('searchInput').value = '';
+                    document.getElementById('speakerFilter').value = '';
+                    document.getElementById('dateInput').value = '';
+                    document.getElementById('searchForm').submit();
+                }
+
+                // Dynamic search with debounce
+                let searchTimeout;
+                document.getElementById('searchInput').addEventListener('input', function () {
+                    clearTimeout(searchTimeout);
+                    searchTimeout = setTimeout(() => {
+                        document.getElementById('searchForm').submit();
+                    }, 500);
+                });
+
+                document.getElementById('dateInput').addEventListener('change', function () {
+                    document.getElementById('searchForm').submit();
+                });
+
+                // Add speaker search to dynamic search
+                document.getElementById('speakerFilter').addEventListener('change', function () {
+                    document.getElementById('searchForm').submit();
+                });
+            </script>
+</body>
+
+</html>

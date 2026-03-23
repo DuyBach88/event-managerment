@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Error</title>
+    <link href="/css/bootstrap.css" rel="stylesheet" />
+</head>
+
+<body>
+    <div class="container mt-5">
+        <div class="alert alert-danger">
+            <h1>
+                <%= message %>
+            </h1>
+            <h2>
+                <%= error.status %>
+            </h2>
+            <% if (process.env.NODE_ENV==='development' ) { %>
+                <pre><%= error.stack %></pre>
+                <% } %>
+        </div>
+        <a href="/event/list" class="btn btn-primary">Back to Events List</a>
+    </div>
+</body>
+
+</html>

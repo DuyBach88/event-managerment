@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Registration Page</title>
+    <link href="/css/bootstrap.css" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" />
+    <style>
+        * {
+            padding: 0;
+            margin: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: #eef5f9;
+            color: #333;
+        }
+
+        .container {
+            margin-top: 50px;
+            background-color: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        h1 {
+            color: #2d6a4f;
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 2em;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+            position: relative;
+        }
+
+        .form-control {
+            border-radius: 8px;
+            padding: 12px;
+            font-size: 1em;
+            padding-left: 40px;
+            /* Adds space for icons */
+        }
+
+        /* Styling for input icons */
+        .form-control-icon {
+            position: absolute;
+            left: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 18px;
+            color: #6c757d;
+        }
+
+        /* Styling for the password icon */
+        .password-eye {
+            position: absolute;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            cursor: pointer;
+            font-size: 18px;
+            color: #6c757d;
+        }
+
+        .btn-primary {
+            background-color: #2d6a4f;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 8px;
+            font-size: 1.1em;
+            transition: background-color 0.3s ease;
+            width: 100%;
+        }
+
+        .btn-primary:hover {
+            background-color: #218838;
+        }
+
+        .alert {
+            margin-bottom: 20px;
+            padding: 10px;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h1>Speakers Register Page</h1>
+
+        <% if (typeof message !=='undefined' ) { %>
+            <div class="alert alert-danger">
+                <%= message %>
+            </div>
+            <% } %>
+
+                <form method="POST" action="/register">
+                    <div class="form-group">
+                        <label>Full Name</label>
+                        <div class="input-group">
+                            <i class="fas fa-user form-control-icon"></i>
+                            <input type="text" class="form-control" name="fullName" required />
+                        </div>
+                        <% if (locals.errors && errors.fullName) { %>
+                            <small class="text-danger">
+                                <%= errors.fullName %>
+                            </small>
+                            <% } %>
+                    </div>
+                    <div class="form-group">
+                        <label>Username</label>
+                        <div class="input-group">
+                            <i class="fas fa-user form-control-icon"></i>
+                            <input type="text" class="form-control" name="username" required />
+                        </div>
+                        <% if (locals.errors && errors.username) { %>
+                            <small class="text-danger">
+                                <%= errors.username %>
+                            </small>
+                            <% } %>
+                    </div>
+                    <div class="form-group">
+                        <label>Password</label>
+                        <div class="input-group">
+                            <i class="fas fa-lock form-control-icon"></i>
+                            <input type="password" class="form-control" name="password" id="password" required />
+                            <i class="fas fa-eye password-eye" id="toggle-password"
+                                onclick="togglePasswordVisibility()"></i>
+                        </div>
+                        <% if (locals.errors && errors.password) { %>
+                            <small class="text-danger">
+                                <%= errors.password %>
+                            </small>
+                            <% } %>
+                    </div>
+                    <div class="form-group">
+                        <label>Email</label>
+                        <div class="input-group">
+                            <i class="fas fa-envelope form-control-icon"></i>
+                            <input type="email" class="form-control" name="email" required />
+                        </div>
+                        <% if (locals.errors && errors.email) { %>
+                            <small class="text-danger">
+                                <%= errors.email %>
+                            </small>
+                            <% } %>
+                    </div>
+                    <div class="form-group">
+                        <label>Gender</label>
+                        <div class="input-group">
+                            <i class="fas fa-venus-mars form-control-icon"></i>
+                            <select class="form-control" name="gender" required>
+                                <option value="">Select Gender</option>
+                                <option value="male">Male</option>
+                                <option value="female">Female</option>
+                                <option value="other">Other</option>
+                            </select>
+                        </div>
+                        <% if (locals.errors && errors.gender) { %>
+                            <small class="text-danger">
+                                <%= errors.gender %>
+                            </small>
+                            <% } %>
+                    </div>
+                    <div class="form-group">
+                        <label>Phone Number</label>
+                        <div class="input-group">
+                            <i class="fas fa-phone form-control-icon"></i>
+                            <input type="tel" class="form-control" name="phoneNumber" required />
+                        </div>
+                        <% if (locals.errors && errors.phoneNumber) { %>
+                            <small class="text-danger">
+                                <%= errors.phoneNumber %>
+                            </small>
+                            <% } %>
+                    </div>
+                    <div class="form-group">
+                        <label>City</label>
+                        <div class="input-group">
+                            <i class="fas fa-city form-control-icon"></i>
+                            <input type="text" class="form-control" name="city" required />
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Street</label>
+                        <div class="input-group">
+                            <i class="fas fa-road form-control-icon"></i>
+                            <input type="text" class="form-control" name="street" required />
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Building</label>
+                        <div class="input-group">
+                            <i class="fas fa-building form-control-icon"></i>
+                            <input type="text" class="form-control" name="building" required />
+                        </div>
+                    </div>
+                    <input type="submit" value="Register" class="btn btn-primary">
+                </form>
+    </div>
+
+    <script src="/js/JQuery-3.3.1.min.js"></script>
+    <script src="/js/popper.js"></script>
+    <script src="/js/bootstrap.js"></script>
+
+    <script>
+        // Show/Hide Password
+        function togglePasswordVisibility() {
+            const passwordField = document.getElementById('password');
+            const passwordEyeIcon = document.getElementById('toggle-password');
+            if (passwordField.type === 'password') {
+                passwordField.type = 'text';
+                passwordEyeIcon.classList.remove('fa-eye');
+                passwordEyeIcon.classList.add('fa-eye-slash');
+            } else {
+                passwordField.type = 'password';
+                passwordEyeIcon.classList.remove('fa-eye-slash');
+                passwordEyeIcon.classList.add('fa-eye');
+            }
+        }
+    </script>
+</body>
+
+</html>

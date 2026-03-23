@@ -1,0 +1,613 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Admin Dashboard</title>
+    <link href="/css/bootstrap.css" rel="stylesheet" />
+    <link href="/css/font-awesome.css" rel="stylesheet" />
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+
+    <style>
+        * {
+            padding: 0;
+            margin: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background-color: #f8f9fa;
+            font-family: 'Poppins', sans-serif;
+            color: #333;
+            display: flex;
+            flex-direction: column;
+            transition: background-color 0.3s ease;
+        }
+
+        .main-content {
+            flex: 1 0 auto;
+            padding: 20px;
+        }
+
+        h2 {
+            color: #212529;
+            font-size: 34px;
+            font-weight: 600;
+            margin-bottom: 40px;
+            text-align: center;
+        }
+
+        .stats-card {
+            border-radius: 12px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+            margin-bottom: 30px;
+            padding: 20px;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .stats-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.1);
+        }
+
+        .number-stat {
+            font-size: 3em;
+            font-weight: 700;
+            color: #fff;
+        }
+
+        .card-body {
+            padding: 25px;
+        }
+
+        .card-title {
+            font-size: 20px;
+            font-weight: 600;
+            color: #495057;
+            margin-bottom: 15px;
+        }
+
+        .card-text {
+            font-size: 16px;
+            color: #6c757d;
+        }
+
+        .nav-link {
+            color: #495057;
+            transition: color 0.3s ease;
+        }
+
+        .nav-link:hover {
+            color: #007bff;
+        }
+
+        .chart-container {
+            position: relative;
+            margin-top: 30px;
+            height: 300px;
+        }
+
+        .active-speakers {
+            padding: 20px;
+            border-radius: 12px;
+            background-color: #ffffff;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+            margin-top: 30px;
+        }
+
+        .list-group-item {
+            border: none;
+            padding: 15px 20px;
+            background-color: transparent;
+            transition: background-color 0.3s ease;
+        }
+
+        .list-group-item:hover {
+            background-color: #f1f1f1;
+        }
+
+        .badge {
+            font-size: 14px;
+            padding: 8px 12px;
+            background-color: #007bff;
+        }
+
+        .btn {
+            font-size: 16px;
+            padding: 12px 20px;
+            border-radius: 30px;
+            text-transform: uppercase;
+            font-weight: 500;
+            transition: background-color 0.3s, transform 0.3s;
+            width: 100%;
+        }
+
+        .btn-primary {
+            background-color: #007bff;
+            border: none;
+        }
+
+        .btn-primary:hover {
+            background-color: #0056b3;
+            transform: scale(1.05);
+        }
+
+        .btn-success {
+            background-color: #28a745;
+            border: none;
+        }
+
+        .btn-success:hover {
+            background-color: #218838;
+            transform: scale(1.05);
+        }
+
+        .btn-warning {
+            background-color: #ffc107;
+            border: none;
+        }
+
+        .btn-warning:hover {
+            background-color: #e0a800;
+            transform: scale(1.05);
+        }
+
+        .btn-danger {
+            background-color: #dc3545;
+            border: none;
+        }
+
+        .btn-danger:hover {
+            background-color: #c82333;
+            transform: scale(1.05);
+        }
+
+        .row {
+            margin-bottom: 30px;
+        }
+
+        .col-md-4,
+        .col-md-6 {
+            padding: 15px;
+        }
+
+        .card {
+            background-color: #ffffff;
+            border-radius: 15px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
+        }
+
+        .card-body {
+            padding: 25px;
+        }
+
+        .card-title {
+            font-size: 20px;
+            font-weight: 700;
+            color: #333;
+        }
+
+        .card-text {
+            font-size: 14px;
+            color: #6c757d;
+        }
+
+        .card .btn {
+            width: auto;
+        }
+
+        @media (max-width: 768px) {
+            .stats-card {
+                margin-bottom: 20px;
+            }
+
+            .col-md-4 {
+                width: 100%;
+            }
+
+            h2 {
+                font-size: 28px;
+            }
+
+            .btn {
+                font-size: 14px;
+            }
+        }
+
+        .stats-card {
+            transition: transform 0.3s ease-in-out;
+        }
+
+        .stats-card:hover {
+            transform: scale(1.05);
+        }
+    </style>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+
+<body>
+    <%- include("./adminNavbar.ejs") %>
+
+        <div class="main-content">
+            <div class="container">
+                <h2>Welcome, Admin</h2>
+                <!-- <%= locals.adminName || 'Admin' %> -->
+
+                <!-- Statistics Overview -->
+                <div class="row mb-4">
+                    <!-- Total Events -->
+                    <div class="col-md-3">
+                        <div class="card stats-card shadow-lg border-0 bg-primary text-white text-center">
+                            <div class="card-body">
+                                <i class="fa-solid fa-calendar-check fa-3x mb-2"></i>
+                                <h5 class="card-title">Total Events</h5>
+                                <h2 class="fw-bold">
+                                    <%= stats.totalEvents %>
+                                </h2>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Completed Events -->
+                    <div class="col-md-3">
+                        <div class="card stats-card shadow-lg border-0 bg-success text-white text-center">
+                            <div class="card-body">
+                                <i class="fa-solid fa-calendar-day fa-3x mb-2"></i>
+                                <h5 class="card-title">Completed Events</h5>
+                                <h2 class="fw-bold">
+                                    <%= stats.completedEvents %>
+                                </h2>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Upcoming Events -->
+                    <div class="col-md-3">
+                        <div class="card stats-card shadow-lg border-0 bg-warning text-white text-center">
+                            <div class="card-body">
+                                <i class="fa-solid fa-calendar-plus fa-3x mb-2"></i>
+                                <h5 class="card-title">Upcoming Events</h5>
+                                <h2 class="fw-bold">
+                                    <%= stats.upcomingEvents %>
+                                </h2>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Total Speakers -->
+                    <div class="col-md-3">
+                        <div class="card stats-card shadow-lg border-0 bg-info text-white text-center">
+                            <div class="card-body">
+                                <i class="fa-solid fa-microphone fa-3x mb-2"></i>
+                                <h5 class="card-title">Total Speakers</h5>
+                                <h2 class="fw-bold">
+                                    <%= stats.totalSpeakers %>
+                                </h2>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+
+                <!-- Monthly Event Distribution -->
+                <div class="row mb-4">
+                    <div class="col-md-6">
+                        <div class="card">
+                            <div class="card-body">
+                                <h5 class="card-title">Monthly Event Distribution</h5>
+                                <div class="chart-container mt-4">
+                                    <canvas id="eventChart"></canvas>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="card">
+                            <div class="card-body">
+                                <h5 class="card-title">Event Status Distribution</h5>
+                                <div class="chart-container mt-4">
+                                    <canvas id="eventPieChart"></canvas>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Bar Chart: Events per Time Period -->
+                <div class="row mb-4">
+                    <div class="col-md-12">
+                        <div class="card">
+                            <div class="card-body">
+                                <h5 class="card-title">Events per Time Period</h5>
+                                <div class="chart-container mt-4">
+                                    <canvas id="periodChart"></canvas>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+
+                <!-- Bar Chart: Events by Day of the Week -->
+                <div class="row mb-4">
+                    <div class="col-md-12">
+                        <div class="card">
+                            <div class="card-body">
+                                <h5 class="card-title">Events by Day of the Week</h5>
+                                <div class="chart-container mt-4">
+                                    <canvas id="eventsByDayChart"></canvas>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- Most Active Speakers & Top Locations -->
+                <div class="row mb-4">
+                    <!-- Most Active Speakers -->
+                    <div class="col-md-6">
+                        <div class="card shadow-lg border-0 rounded h-100">
+                            <div class="card-body">
+                                <h5 class="card-title text-primary"><i class="fa-solid fa-microphone-alt"></i> Most
+                                    Active Speakers</h5>
+                                <div class="list-group">
+                                    <% stats.mostActiveSpeakers.forEach(speaker=> { %>
+                                        <div class="list-group-item d-flex justify-content-between align-items-center">
+                                            <div>
+                                                <strong>
+                                                    <%= speaker.speakerInfo.fullName %>
+                                                </strong>
+                                                <small class="d-block text-muted">
+                                                    Roles: <%= speaker.roles.includes('main') ? 'Main Speaker' : '' %>
+                                                        <%= speaker.roles.includes('main') &&
+                                                            speaker.roles.includes('other') ? ' & ' : '' %>
+                                                            <%= speaker.roles.includes('other') ? 'Other Speaker' : ''
+                                                                %>
+                                                </small>
+                                            </div>
+                                            <span class="badge bg-primary rounded-pill">
+                                                <%= speaker.totalCount %> events
+                                            </span>
+                                        </div>
+                                        <% }) %>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Top Event Locations -->
+                    <div class="col-md-6">
+                        <div class="card shadow-lg border-0 rounded h-100">
+                            <div class="card-body">
+                                <h5 class="card-title text-success"><i class="fa-solid fa-map-marker-alt"></i> Top Event
+                                    Locations</h5>
+                                <div class="list-group">
+                                    <% stats.topLocations.forEach(location=> { %>
+                                        <div class="list-group-item d-flex justify-content-between align-items-center">
+                                            <strong>
+                                                <%= location._id %>
+                                            </strong>
+                                            <span class="badge bg-success rounded-pill">
+                                                <%= location.count %> events
+                                            </span>
+                                        </div>
+                                        <% }) %>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Quick Actions -->
+                <div class="row mt-4">
+                    <div class="col-md-6">
+                        <div class="card shadow-lg border-0 rounded h-100">
+                            <div class="card-body">
+                                <h5 class="card-title text-warning"><i class="fa-solid fa-bolt"></i> Quick Actions</h5>
+                                <div class="d-grid gap-2">
+                                    <a href="/event/add" class="btn btn-primary">
+                                        <i class="fa fa-plus"></i> Create New Event
+                                    </a>
+                                    <a href="/speaker/add" class="btn btn-success">
+                                        <i class="fa fa-user-plus"></i> Add New Speaker
+                                    </a>
+                                    <a href="/event/canceled" class="btn btn-warning">
+                                        <i class="fa fa-calendar-times"></i> View Canceled Events
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Management Cards -->
+                    <div class="col-md-4">
+                        <div class="card shadow-lg border-0 rounded h-100 text-center">
+                            <div class="card-body">
+                                <i class="fa-solid fa-user-tie fa-3x text-primary mb-3"></i>
+                                <h5 class="card-title">Speakers</h5>
+                                <p class="card-text">Manage all speakers</p>
+                                <a href="/speaker/list" class="btn btn-primary">View Speakers</a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-4">
+                        <div class="card shadow-lg border-0 rounded h-100 text-center">
+                            <div class="card-body">
+                                <i class="fa-solid fa-calendar-alt fa-3x text-success mb-3"></i>
+                                <h5 class="card-title">Events</h5>
+                                <p class="card-text">Manage all events</p>
+                                <a href="/event/list" class="btn btn-primary">View Events</a>
+                                <a href="/event/add" class="btn btn-success mt-2">Add Event</a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-4">
+                        <div class="card shadow-lg border-0 rounded h-100 text-center">
+                            <div class="card-body">
+                                <i class="fa-solid fa-calendar-times fa-3x text-danger mb-3"></i>
+                                <h5 class="card-title">Canceled Events</h5>
+                                <p class="card-text">View and manage canceled events</p>
+                                <a href="/admin/canceled-events" class="btn btn-danger">View Canceled Events</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <%- include("./partials/adminFooter.ejs") %>
+
+            <script src="/js/JQuery-3.3.1.min.js"></script>
+            <script src="/js/popper.js"></script>
+            <script src="/js/bootstrap.js"></script>
+            <script>
+                // Monthly distribution chart
+                const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+                const monthlyData = Array(12).fill(0);
+                const ctx = document.getElementById('eventChart').getContext('2d');
+            <% stats.monthlyDistribution.forEach(function (item) { %>
+                    monthlyData[<%= item._id - 1 %>] = <%= item.count %>;
+            <% }); %>
+
+                    new Chart(ctx, {
+                        type: 'line',
+                        data: {
+                            labels: monthNames,
+                            datasets: [{
+                                label: 'Events per Month',
+                                data: monthlyData,
+                                borderColor: '#007bff',
+                                backgroundColor: 'rgba(0, 123, 255, 0.1)',
+                                tension: 0.1,
+                                fill: true
+                            }]
+                        },
+                        options: {
+                            responsive: true,
+                            maintainAspectRatio: false,
+                            scales: {
+                                y: {
+                                    beginAtZero: true,
+                                    ticks: {
+                                        stepSize: 1
+                                    }
+                                }
+                            }
+                        }
+                    });
+
+                // Event Status Distribution (Pie chart)
+                const pieCtx = document.getElementById('eventPieChart').getContext('2d');
+                new Chart(pieCtx, {
+                    type: 'pie',
+                    data: {
+                        labels: ['Completed', 'Upcoming'],
+                        datasets: [{
+                            data: [
+                            <%= stats.completedEvents %>,
+                            <%= stats.upcomingEvents %>,
+                            ],
+                            backgroundColor: [
+                                "#28a745", "#007bff"
+                            ],
+                            borderWidth: 1
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: {
+                                position: 'bottom'
+                            },
+                            tooltip: {
+                                callbacks: {
+                                    label: function (context) {
+                                        const total = context.dataset.data.reduce((a, b) => a + b, 0);
+                                        const percentage = Math.round((context.raw / total) * 100);
+                                        return `${context.label}: ${context.raw} (${percentage}%)`;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                });
+
+                document.addEventListener("DOMContentLoaded", function () {
+                    // Events per Time Period Chart
+                    const periodData = {
+                        labels: ["Week", "Month", "Quarter", "Year"],
+                        datasets: [{
+                            label: "Events per Time Period",
+                            data: [
+                    <%= stats.weeklyEvents || 0 %>,
+                    <%= stats.monthlyEvents || 0 %>,
+                    <%= stats.quarterlyEvents || 0 %>,
+                    <%= stats.yearlyEvents || 0 %>
+                ],
+                            backgroundColor: ["#ff6384", "#36a2eb", "#ffce56", "#4bc0c0"],
+                            borderColor: "#333",
+                            borderWidth: 1
+                        }]
+                    };
+
+                    const periodCtx = document.getElementById("periodChart").getContext("2d");
+                    new Chart(periodCtx, {
+                        type: "bar",
+                        data: periodData,
+                        options: {
+                            responsive: true,
+                            maintainAspectRatio: false,
+                            scales: {
+                                y: { beginAtZero: true }
+                            },
+                            plugins: {
+                                tooltip: {
+                                    callbacks: {
+                                        label: function (context) {
+                                            return `${context.dataset.label}: ${context.raw}`;
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    });
+                });
+                document.addEventListener("DOMContentLoaded", function () {
+                    // Labels cho ngày trong tuần
+                    const dayLabels = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+
+                    // Nhận dữ liệu từ server
+                    const dayData = <%= JSON.stringify(stats.eventsByDayOfWeek) %>;
+
+                    const ctx = document.getElementById("eventsByDayChart").getContext("2d");
+                    new Chart(ctx, {
+                        type: "bar",
+                        data: {
+                            labels: dayLabels,
+                            datasets: [{
+                                label: "Events by Day of the Week",
+                                data: dayData,
+                                backgroundColor: "#36a2eb"
+                            }]
+                        },
+                        options: {
+                            responsive: true,
+                            maintainAspectRatio: false,
+                            scales: {
+                                y: { beginAtZero: true }
+                            }
+                        }
+                    });
+                });
+
+            </script>
+
+
+
+</body>
+
+</html>

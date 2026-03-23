@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Speaker Profile</title>
+    <link href="/css/bootstrap.css" rel="stylesheet" />
+    <link href="/css/font-awesome.css" rel="stylesheet" />
+    <style>
+        :root {
+            --primary-color: #4361ee;
+            --secondary-color: #3f37c9;
+            --accent-color: #4895ef;
+            --success-color: #4cc9f0;
+            --warning-color: #f72585;
+            --light-bg: #f8f9fa;
+        }
+
+        body {
+            font-family: 'Segoe UI', 'Roboto', sans-serif;
+            background-color: var(--light-bg);
+            color: #2b2d42;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 30px auto;
+            padding: 0 20px;
+        }
+
+        .header {
+            text-align: center;
+            background: linear-gradient(135deg, var(--primary-color), var(--accent-color));
+            padding: 2rem;
+            border-radius: 15px;
+            margin-bottom: 2rem;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .header h1 {
+            color: white;
+            font-size: 2.5rem;
+            font-weight: 600;
+            margin: 0;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .content {
+            display: grid;
+            grid-template-columns: 1fr 1.5fr;
+            gap: 2rem;
+        }
+
+        .form-section {
+            background: white;
+            border-radius: 15px;
+            padding: 2rem;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+        }
+
+        .form-section h4 {
+            color: var(--primary-color);
+            margin-bottom: 1.5rem;
+            font-weight: 600;
+            border-bottom: 2px solid var(--accent-color);
+            padding-bottom: 10px;
+        }
+
+        .form-control {
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            padding: 10px 15px;
+            transition: all 0.3s ease;
+        }
+
+        .form-control:focus {
+            border-color: var(--accent-color);
+            box-shadow: 0 0 0 0.2rem rgba(67, 97, 238, 0.15);
+        }
+
+        .table {
+            border-collapse: separate;
+            border-spacing: 0;
+            width: 100%;
+        }
+
+        .table th {
+            background: var(--primary-color);
+            color: white;
+            font-weight: 500;
+            padding: 15px;
+            text-transform: uppercase;
+            font-size: 0.9rem;
+            letter-spacing: 0.5px;
+        }
+
+        .table td {
+            padding: 15px;
+            border-bottom: 1px solid #eee;
+            vertical-align: middle;
+        }
+
+        .btn {
+            border-radius: 8px;
+            padding: 8px 20px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary {
+            background: var(--primary-color);
+            border: none;
+        }
+
+        .btn-primary:hover {
+            background: var(--secondary-color);
+            transform: translateY(-2px);
+        }
+
+        .btn-danger {
+            background: var(--warning-color);
+            border: none;
+        }
+
+        .badge {
+            padding: 8px 12px;
+            border-radius: 6px;
+            font-weight: 500;
+            font-size: 0.85rem;
+        }
+
+        .alert {
+            border-radius: 10px;
+            border: none;
+            padding: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        @media (max-width: 992px) {
+            .content {
+                grid-template-columns: 1fr;
+            }
+
+            .table-section {
+                overflow-x: auto;
+            }
+
+            .table {
+                min-width: 800px;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .header h1 {
+                font-size: 2rem;
+            }
+
+            .container {
+                padding: 0 10px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <%- include("./speakerNavbar.ejs") %>
+
+        <div class="container">
+            <div class="header">
+                <h1>Speaker Profile</h1>
+            </div>
+
+            <div class="content">
+                <div class="form-section">
+                    <h4>Personal Information</h4>
+                    <% if (successMessage && successMessage.length> 0) { %>
+                        <div class="alert alert-success alert-dismissible fade show" role="alert">
+                            <%= successMessage %>
+                                <button type="button" class="btn-close" data-bs-dismiss="alert"
+                                    aria-label="Close"></button>
+                        </div>
+                        <% } %>
+
+                            <!-- Add password-specific messages -->
+                            <% if (passwordSuccess && passwordSuccess.length> 0) { %>
+                                <div class="alert alert-success alert-dismissible fade show" role="alert">
+                                    <%= passwordSuccess %>
+                                        <button type="button" class="btn-close" data-bs-dismiss="alert"
+                                            aria-label="Close"></button>
+                                </div>
+                                <% } %>
+
+                                    <% if (passwordError && passwordError.length> 0) { %>
+                                        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                                            <%= passwordError %>
+                                                <button type="button" class="btn-close" data-bs-dismiss="alert"
+                                                    aria-label="Close"></button>
+                                        </div>
+                                        <% } %>
+
+                                            <form action="/speaker/updateSpeakerProfile" method="POST">
+                                                <div class="mb-3">
+                                                    <label>Full Name</label>
+                                                    <input type="text" class="form-control" name="fullName"
+                                                        value="<%= speakerData.fullName %>" readonly />
+                                                </div>
+                                                <div class="mb-3">
+                                                    <label>Username</label>
+                                                    <input type="text" class="form-control" name="username"
+                                                        value="<%= speakerData.username %>" readonly />
+                                                </div>
+                                                <div class="mb-3">
+                                                    <label>Password</label>
+                                                    <div class="input-group">
+                                                        <input type="password" class="form-control" value="********"
+                                                            readonly />
+                                                        <a href="/speaker/changePassword" class="btn btn-warning">
+                                                            <i class="fa fa-key"></i>
+                                                        </a>
+                                                    </div>
+                                                </div>
+                                                <div class="mb-3">
+                                                    <label>Phone Number</label>
+                                                    <input type="tel" class="form-control" name="phoneNumber"
+                                                        value="<%= speakerData.phoneNumber %>" />
+                                                </div>
+                                                <div class="mb-3">
+                                                    <label>Gender</label>
+                                                    <select class="form-control" name="gender">
+                                                        <option value="male" <%=speakerData.gender==='male' ? 'selected'
+                                                            : '' %>>Male
+                                                        </option>
+                                                        <option value="female" <%=speakerData.gender==='female'
+                                                            ? 'selected' : '' %>
+                                                            >Female
+                                                        </option>
+                                                        <option value="other" <%=speakerData.gender==='other'
+                                                            ? 'selected' : '' %>>Other
+                                                        </option>
+                                                    </select>
+                                                </div>
+                                                <div class="mb-3">
+                                                    <label>City</label>
+                                                    <input type="text" class="form-control" name="city"
+                                                        value="<%= speakerData.address.city %>" />
+                                                </div>
+                                                <div class="mb-3">
+                                                    <label>Street</label>
+                                                    <input type="text" class="form-control" name="street"
+                                                        value="<%= speakerData.address.street %>" />
+                                                </div>
+                                                <div class="mb-3">
+                                                    <label>Building</label>
+                                                    <input type="text" class="form-control" name="building"
+                                                        value="<%= speakerData.address.building %>" />
+                                                </div>
+                                                <button type="submit" class="btn btn-primary w-100">Update</button>
+                                            </form>
+
+
+                </div>
+
+                <div class="table-section">
+                    <table class="table text-center">
+                        <thead>
+                            <tr>
+                                <th>Event Title</th>
+                                <th>Event Date</th>
+                                <th>Time</th>
+                                <th>Location</th>
+                                <th>Your Role</th>
+                                <th>Status</th>
+                                <th>Options</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <% currentEvent.forEach((event)=> { %>
+                                <tr>
+                                    <td>
+                                        <%= event.title %>
+                                    </td>
+                                    <td>
+                                        <%= event.date ? event.date.toDateString() : 'No Date Yet' %>
+                                    </td>
+                                    <td>
+                                        <%= event.startTime %> - <%= event.endTime %>
+                                    </td>
+                                    <td>
+                                        <%= event.location || 'TBD' %>
+                                    </td>
+                                    <td>
+                                        <% if (event.mainSpeaker &&
+                                            event.mainSpeaker.toString()===speakerData._id.toString()) { %>
+                                            <span class="badge bg-success">Main Speaker</span>
+                                            <% } else { %>
+                                                <span class="badge bg-info">Other Speaker</span>
+                                                <% } %>
+                                    </td>
+                                    <td>
+                                        <% let today=new Date(); let eventDate=event.date ? new Date(event.date) : null;
+                                            let status='Unknown' ; let isCompleted=false; let isOngoing=false; if
+                                            (eventDate) { let [currentHour, currentMinute]=[new Date().getHours(), new
+                                            Date().getMinutes()]; let [startHour, startMinute]=(event.startTime
+                                            || '00:00' ).split(':').map(Number); let [endHour, endMinute]=(event.endTime
+                                            || '23:59' ).split(':').map(Number); let currentTimeMinutes=currentHour * 60
+                                            + currentMinute; let startTimeMinutes=startHour * 60 + startMinute; let
+                                            endTimeMinutes=endHour * 60 + endMinute; eventDate.setHours(0,0,0,0);
+                                            today.setHours(0,0,0,0); if (eventDate < today) { status='Completed' ;
+                                            isCompleted=true; } else if (eventDate.getTime()===today.getTime()) { if
+                                            (currentTimeMinutes>= startTimeMinutes && currentTimeMinutes <=
+                                                endTimeMinutes) { status='Ongoing' ; isOngoing=true; } else if
+                                                (currentTimeMinutes> endTimeMinutes) {
+                                                status = 'Completed';
+                                                isCompleted = true;
+                                                } else {
+                                                status = 'Upcoming';
+                                                }
+                                                } else {
+                                                status = 'Upcoming';
+                                                }
+                                                }
+                                                event.status = status;
+                                                event.isCompleted = isCompleted;
+                                                event.isOngoing = isOngoing;
+                                                %>
+                                                <span
+                                                    class="badge <%= status === 'Upcoming' ? 'bg-warning' : status === 'Ongoing' ? 'bg-success' : 'bg-secondary' %>">
+                                                    <%= status %>
+                                                </span>
+                                    </td>
+                                    <td>
+                                        <% if (event.isCompleted) { %>
+                                            <button class="btn btn-secondary btn-sm" disabled>Finished</button>
+                                            <% } else if (event.isOngoing) { %>
+                                                <button class="btn btn-success btn-sm" disabled>Event Ongoing</button>
+                                                <% } else { %>
+                                                    <button class="btn btn-danger btn-sm"
+                                                        onclick="cancelEvent('<%= event._id %>')">Cancel</button>
+                                                    <% } %>
+                                    </td>
+                                </tr>
+                                <% }) %>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        <%- include('./partials/speakerFooter') %>
+            <script src="/js/bootstrap.js"></script>
+            <script>
+                function cancelEvent(eventId) {
+                    if (confirm('Are you sure you want to cancel this event?')) {
+                        fetch('/speaker/cancelEvent', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                            },
+                            body: JSON.stringify({ eventId })
+                        })
+                            .then(response => response.json())
+                            .then(data => {
+                                alert(data.message);
+                                if (data.message === "Event cancelled successfully") {
+                                    location.reload();
+                                }
+                            })
+                            .catch(error => {
+                                console.error('Error:', error);
+                                alert('Failed to cancel event');
+                            });
+                    }
+                }
+            </script>
+
+</body>
+
+</html>
