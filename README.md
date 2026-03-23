@@ -33,14 +33,4 @@ the speaker with another one
 4-Connect Flash For Validation
 </pre>
 
-### -Project Pictures
-![](public/Images/adminPanel.png)
-![](public/Images/speakerProfile.png)
-![](public/Images/listEvents.png)
-![](public/Images/upcomingEvents.png)
-![](public/Images/register.png)
-![](public/Images/listSpeakers.png)
-![](public/Images/login.png)
-![](public/Images/editEvent.png)
-![](public/Images/addevents.png)
-![](public/Images/addSpeaker.png)
+
