@@ -44,7 +44,7 @@ authenticationRouter.get("/login", (req, res) => {
 authenticationRouter.post("/login", async (req, res) => {
   const { username, password } = req.body;
   try {
-    if (username === "bachdnd" && password === "123") {
+    if (username === "akard" && password === "123") {
       const adminToken = jwt.sign(
         { userId: "admin", username: "bachdnd", role: "admin" },
         secretKey,
